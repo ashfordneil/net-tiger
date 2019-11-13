@@ -1,0 +1,11 @@
+[package]
+name = "net-tiger"
+version = "0.1.0"
+authors = ["Neil Ashford <ashfordneil0@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "nt"
+path = "src/main.rs"
+
+[dependencies]
