@@ -1,3 +1,13 @@
+mod config;
+mod reactor;
+
+use self::config::Arguments;
+
 fn main() {
-    println!("Hello, world!");
+    let args = Arguments::new();
+
+    log::debug!("Starting up");
+    log::info!("Connecting to {:?}", args.url);
+
+    log::error!("We can't connect yet");
 }

@@ -9,3 +9,16 @@ name = "nt"
 path = "src/main.rs"
 
 [dependencies]
+futures = "0.3.1"
+url = "2.1.0"
+structopt = "0.3.4"
+trust-dns-resolver = "0.12.0"
+log = "0.4.8"
+env_logger = "0.7.1"
+mio = "0.6.19"
+slab = "0.4.2"
+failure = "0.1.6"
+libc = "0.2.65"
+
+[dev-dependencies]
+rusty-fork = "0.2.2"
