@@ -83,6 +83,8 @@ impl Executor {
         // futures to remove
         let mut completed = Vec::<usize>::new();
 
+        log::trace!("Initial poll to get everything warmed up");
+
         // start by polling every future we have, just in case.
         for (id, future) in self.tasks.iter_mut() {
             if id == self.separate_task {
@@ -112,11 +114,10 @@ impl Executor {
         });
 
         let output = loop {
+            log::trace!("Looking in backlog for futures");
             let future_to_poll = match self.to_do.try_recv() {
                 Ok(id) => id,
-                Err(TryRecvError::Disconnected) => {
-                    unreachable!()
-                }
+                Err(TryRecvError::Disconnected) => unreachable!(),
                 Err(TryRecvError::Empty) => {
                     Reactor::spin()?;
                     continue;
@@ -124,11 +125,13 @@ impl Executor {
             };
 
             if future_to_poll == self.separate_task {
+                log::trace!("Polling the main future");
                 let mut ctx = Context::from_waker(&waker);
                 if let Poll::Ready(result) = main_future.as_mut().poll(&mut ctx) {
                     break result;
                 }
             } else {
+                log::trace!("Polling future {}", future_to_poll);
                 // we know that future is a valid value as long as the ID isn't
                 // self.separate_task, as that is the only ID in the slab associated
                 // with an uninitialised value.
@@ -146,7 +149,11 @@ impl Executor {
 
 #[cfg(test)]
 mod test {
-    use std::{future::Future, pin::Pin, task::{Context, Poll}};
+    use std::{
+        future::Future,
+        pin::Pin,
+        task::{Context, Poll},
+    };
 
     use crate::executor::Executor;
 
@@ -169,8 +176,8 @@ mod test {
                     ctx.waker().wake_by_ref();
                     self.0 = true;
                     Poll::Pending
-                },
-                true => Poll::Ready(())
+                }
+                true => Poll::Ready(()),
             }
         }
     }

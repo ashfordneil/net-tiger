@@ -35,6 +35,7 @@ impl Waker {
     /// Drop the waker.
     unsafe fn drop(raw: *const ()) {
         let waker = Box::from_raw(raw as *mut Waker);
+        drop(waker);
     }
 
     /// The v table necessary for dynamic waker dispatch.
@@ -56,6 +57,7 @@ impl Waker {
 
     /// Actually wake the waker.
     fn do_wake(&self) {
+        log::trace!("Waking task {}", self.id);
         self.sender.send(self.id).unwrap();
     }
 }
