@@ -106,7 +106,7 @@ impl AsyncRead for Stdin {
             Err(ref e) if e.kind() == ErrorKind::WouldBlock => {
                 self.handle.add_waker(ctx.waker().clone());
                 Poll::Pending
-            },
+            }
             res => Poll::Ready(res),
         }
     }
@@ -142,7 +142,7 @@ mod test {
             let mut input = Stdin::new().unwrap();
             let future = async {
                 let mut buffer = String::new();
-                input.read_to_string(&mut buffer).await;
+                input.read_to_string(&mut buffer).await.unwrap();
                 assert_eq!("Hello, world\n", buffer);
             };
 
